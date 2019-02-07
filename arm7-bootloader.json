@@ -1,0 +1,22 @@
+{
+    "llvm-target": "thumbv7-unknown-none-gnu",
+    "data-layout": "e-p:32:32-m:e-i32:32-f32:32-n8:16:32-S8",
+    "linker-flavor": "ld.lld",
+    "linker": "rust-lld",
+    "pre-link-args": {
+        "ld.lld": [
+	    "--script=linker.ld",
+	    "--print-map"
+	]
+    },
+    "target-endian": "little",
+    "target-pointer-width": "32",
+    "target-c-int-width": "32",
+    "arch": "arm",
+    "os": "none",
+    "features": "",
+    "disable-redzone": true,
+    "panic": "abort",
+    "executables": true,
+    "relocation_model": "static"
+}
