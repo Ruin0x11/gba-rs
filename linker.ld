@@ -17,6 +17,8 @@ __irq_flags     = 0x03007ff8;
 
 SECTIONS
 {
+/******************************* TEXT *******************************/
+
     . = __text_start;
     .init :
     {
@@ -31,6 +33,7 @@ SECTIONS
     } >rom =0xFF
 
     __text_end = .;
+
     .rodata :
     {
         *(.rodata)
@@ -41,9 +44,11 @@ SECTIONS
     .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >rom
     __exidx_end = .;
 
+/****************************** IWRAM *******************************/
+
     __iwram_lma = .;
 
-    .iwram __iwram_start : AT (__iwram_lma)
+    .iwram /* __iwram_start */ : AT(__iwram_lma)
     {
         __iwram_start__ = ABSOLUTE(.) ;
         *(.iwram)
@@ -51,8 +56,6 @@ SECTIONS
         . = ALIGN(4);
         __iwram_end__ = ABSOLUTE(.) ;
     } >iwram = 0xff
-
-    __data_lma = __iwram_lma + SIZEOF(.iwram) ;
 
     .bss ALIGN(4) (NOLOAD) :
     {
@@ -65,7 +68,11 @@ SECTIONS
 
     } /*AT*/>iwram
 
-    .data ALIGN(4) : AT (__data_lma)
+/******************************* DATA *******************************/
+
+    __data_lma = __iwram_lma + SIZEOF(.iwram);
+
+    .data ALIGN(4) : AT(__data_lma)
     {
         __data_start__ = ABSOLUTE(.);
         *(.data)
@@ -73,45 +80,11 @@ SECTIONS
         . = ALIGN(4);
     } >iwram = 0xff
 
-    __preinit_lma = __data_lma + SIZEOF(.data);
-
-    .preinit_array ALIGN(4)    : AT (__preinit_lma)
-    {
-        __preinit_array_start = ABSOLUTE(.);
-        KEEP (*(.preinit_array))
-        __preinit_array_end = ABSOLUTE(.);
-    } >iwram
-
-    __init_lma = __preinit_lma + SIZEOF(.preinit_array);
-
-    .init_array  ALIGN(4)   : AT (__init_lma)
-    {
-        __init_array_start = ABSOLUTE(.);
-        KEEP (*(SORT(.init_array.*)))
-        KEEP (*(.init_array))
-        __init_array_end = ABSOLUTE(.);
-    } >iwram
-
-    __fini_lma = __init_lma + SIZEOF(.init_array);
-
-    .fini_array  ALIGN(4)   : AT (__fini_lma)
-    {
-        __fini_array_start = ABSOLUTE(.);
-        KEEP (*(SORT(.fini_array.*)))
-        KEEP (*(.fini_array))
-          __fini_array_end = ABSOLUTE(.);
-    } >iwram
-
-/*
-    __jcr_lma = __fini_lma + SIZEOF(.fini_array);
-    .jcr        ALIGN(4)    : AT (__jcr_lma) { KEEP (*(.jcr)) } >iwram
-*/
-
     __data_end__  =  ABSOLUTE(.);
-    /* __iwram_overlay_lma = __jcr_lma + SIZEOF(.jcr); */
-    __iwram_overlay_lma = __fini_lma + SIZEOF(.fini_array);
 
 /*
+    __iwram_overlay_lma = __jcr_lma + SIZEOF(.jcr);
+
     __iwram_overlay_start = . ;
 
     OVERLAY ALIGN(4) : NOCROSSREFS AT (__iwram_overlay_lma)
@@ -131,36 +104,42 @@ SECTIONS
     __iwram_overlay_end = . ;
     __ewram_lma = __iwram_overlay_lma + (__iwram_overlay_end - __iwram_overlay_start) ;
 */
-    __ewram_lma = __iwram_overlay_lma;
+
+/****************************** EWRAM *******************************/
 
     __iheap_start = . ;
 
-    .ewram __ewram_start : AT (__ewram_lma)
+    __ewram_lma = __data_lma + SIZEOF(.data);
+
+    .ewram /* __ewram_start */ : AT (__ewram_lma)
     {
         *(.ewram)
         . = ALIGN(4);
         __ewram_end = ABSOLUTE(.);
     }>ewram = 0xff
 
-    __pad_lma = __ewram_lma + SIZEOF(.ewram);
-
     .sbss ALIGN(4)(NOLOAD):
-     {
+    {
         __sbss_start__ = ABSOLUTE(.);
          *(.sbss)
          . = ALIGN(4);
         __sbss_end__  = ABSOLUTE(.);
         __end__ = ABSOLUTE(.);
         __eheap_start = ABSOLUTE(.);
-     } /*AT*/>ewram
-/*
+    } /*AT*/>ewram
+
+/******************************* PAD ********************************/
+
+    __pad_lma = __ewram_lma + SIZEOF(.ewram);
+
     .pad ALIGN(4) : AT (__pad_lma)
     {
         LONG(0x52416b64)
         LONG(0x4d)
         . = ALIGN(4);
-    }>rom = 0xff
+    } >rom = 0xff
+
+/******************************* END ********************************/
+
     __rom_end__ = __pad_lma + SIZEOF(.pad);
-*/
-    __rom_end__ = __ewram_lma + SIZEOF(.ewram);
 }
