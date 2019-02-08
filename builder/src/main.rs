@@ -30,6 +30,7 @@ fn main() {
         "--target".into(),
         "../thumbv7-gba-cart.json".into(),
         "--release".into(),
+        "-vv".into(),
     ];
     if args.value_of("no-default-features").unwrap() {
         build_args.push("--no-default-features".into());

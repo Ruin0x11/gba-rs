@@ -28,7 +28,6 @@ unsafe fn set_pixel(x: u8, y: u8, color: u16)
     *ptr.offset((x + y * SCREEN_WIDTH) as isize) = color;
 }
 
-
 unsafe fn our_main()
 {
     vmode_3_bg_2();
@@ -38,16 +37,30 @@ unsafe fn our_main()
     set_pixel(120, 96, 0x7C00);
 }
 
+#[no_mangle]
+#[link_section = ".iwram"]
+unsafe fn in_your_iwram()
+{
+    set_pixel(120, 70, 0x001F);
+    set_pixel(136, 70, 0x03E0);
+    set_pixel(120, 86, 0x7C00);
+}
+
+#[no_mangle]
+#[link_section = ".ewram"]
+unsafe fn in_your_ewram()
+{
+    set_pixel(120, 60, 0x001F);
+    set_pixel(136, 60, 0x03E0);
+    set_pixel(120, 76, 0x7C00);
+}
 
 #[no_mangle]
 pub extern "C" fn main() -> ! {
     unsafe {
         our_main();
-
-        asm!("nop");
-        asm!("nop");
-        asm!("nop");
-        asm!("nop");
+        in_your_iwram();
+        in_your_ewram();
     }
     loop {}
 }

@@ -28,7 +28,7 @@ SECTIONS
 
     .text :
     {
-        *(.text)
+        *(EXCLUDE_FILE (*.iwram*) .text)
         . = ALIGN(4);
     } >rom =0xFF
 
@@ -52,7 +52,6 @@ SECTIONS
     {
         __iwram_start__ = ABSOLUTE(.) ;
         *(.iwram)
-        *iwram.*(.text)
         . = ALIGN(4);
         __iwram_end__ = ABSOLUTE(.) ;
     } >iwram = 0xff
