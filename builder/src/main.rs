@@ -22,6 +22,8 @@ fn main() {
         process::exit(1);
     };
 
+    let mut target = "gba".into();
+
     // build ROM
 
     let mut build_args = vec![
@@ -29,7 +31,6 @@ fn main() {
         "../Cargo.toml".into(),
         "--target".into(),
         "../thumbv7-gba-cart.json".into(),
-        "--release".into(),
         "-vv".into(),
     ];
     if args.value_of("no-default-features").unwrap() {
@@ -38,38 +39,50 @@ fn main() {
     if args.value_of("all-features").unwrap() {
         build_args.push("--all-features".into());
     }
+    if args.value_of("release").unwrap() {
+        build_args.push("--release".into());
+    }
     if let Some(features) = args.optional_value_of("features").unwrap() {
         build_args.push("--features".into());
         build_args.push(features);
     }
+    if let Some(example) = args.optional_value_of("example").unwrap() {
+        target = format!("examples/{}", example);
+        build_args.push("-p".into());
+        build_args.push("gba-examples".into());
+        build_args.push("--example".into());
+        build_args.push(example);
+    }
 
-    println!("Running xbuild.");
+    println!("Running xbuild for target '{}'.", target);
 
     let exit_status = run_xbuild(&build_args);
     if !exit_status.map(|s| s.success()).unwrap_or(false) {
         process::exit(1)
     }
 
-    let bootloader_elf_path = Path::new("../target/thumbv7-gba-cart/release/gba");
-    let mut bootloader_elf_bytes = Vec::new();
-    File::open(bootloader_elf_path)
-        .and_then(|mut f| f.read_to_end(&mut bootloader_elf_bytes))
+    let elf_target = format!("../target/thumbv7-gba-cart/release/{}", target);
+    let elf_path = Path::new(&elf_target);
+    let mut elf_bytes = Vec::new();
+    File::open(elf_path)
+        .and_then(|mut f| f.read_to_end(&mut elf_bytes))
         .expect("failed to read bootloader ELF file");
 
-    // read bootloader section of ELF file
+    // Strip header section of ELF and extract program data
 
-    let elf_file = xmas_elf::ElfFile::new(&bootloader_elf_bytes).unwrap();
+    let elf_file = xmas_elf::ElfFile::new(&elf_bytes).unwrap();
     xmas_elf::header::sanity_check(&elf_file).unwrap();
 
     let init_section = elf_file
         .find_section_by_name(".init")
         .expect("ELF must have .init section");
     let init_offset = init_section.offset() as usize + 0xc0; // add header offset
-    let program_bytes = &bootloader_elf_bytes[init_offset..];
+    let program_bytes = &elf_bytes[init_offset..];
 
     // create output file
 
-    let output_file_path = Path::new("../target/thumbv7-gba-cart/release/image.gba");
+    let output_target = format!("../target/thumbv7-gba-cart/release/{}.gba", target);
+    let output_file_path = Path::new(&output_target);
 
     println!("Writing output to {}.", output_file_path.display());
 
@@ -93,7 +106,16 @@ fn args() -> Args {
         Occur::Optional,
         None,
     );
+    args.option(
+        "",
+        "example",
+        "Example to run",
+        "EXAMPLE",
+        Occur::Optional,
+        None,
+    );
     args.flag("", "all-features", "Activate all available features");
+    args.flag("", "release", "Build for release");
     args.flag(
         "",
         "no-default-features",

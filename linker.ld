@@ -125,7 +125,7 @@ SECTIONS
         __sbss_end__  = ABSOLUTE(.);
         __end__ = ABSOLUTE(.);
         __eheap_start = ABSOLUTE(.);
-    } /*AT*/>ewram
+    } >ewram
 
 /******************************* PAD ********************************/
 
@@ -136,9 +136,11 @@ SECTIONS
         LONG(0x52416b64)
         LONG(0x4d)
         . = ALIGN(4);
-    } >rom = 0xff
+    } = 0xff
 
 /******************************* END ********************************/
 
     __rom_end__ = __pad_lma + SIZEOF(.pad);
 }
+
+ASSERT(SIZEOF(.init) > 0, ".init section was not linked")

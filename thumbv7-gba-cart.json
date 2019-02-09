@@ -1,15 +1,13 @@
 {
-    "llvm-target": "armv4t-none-eabi",
+    "llvm-target": "thumbv4t-none-eabi-gcc",
     "data-layout": "e-p:32:32-m:e-i32:32-f32:32-n8:16:32-S8",
-    "linker-flavor": "ld.lld",
-    "linker": "rust-lld",
+    "linker-flavor": "gcc",
+    "linker": "arm-none-eabi-gcc",
     "pre-link-args": {
-        "ld.lld": [
-	    "--script=linker.ld",
-	    "--print-map",
-	    "--Map=/tmp/out.map",
-	    "--trace",
-	    "--verbose"
+        "gcc": [
+	    "-Tlinker.ld",
+            "-nostartfiles",
+            "-Wl,--print-map"
 	]
     },
     "target-endian": "little",

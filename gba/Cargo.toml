@@ -1,0 +1,8 @@
+[package]
+name = "gba"
+version = "0.1.0"
+authors = ["Ruin0x11 <ipickering2@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+register = "0.3.2"
