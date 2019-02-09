@@ -31,5 +31,6 @@ pub const PAK_RAM_START:       usize = 0x0E000000; /// Start address of GamePak 
 pub const PAK_RAM_END:         usize = 0x0E00FFFF; /// End address of GamePak SRAM.
 
 // Screen
-pub const SCREEN_WIDTH: u32 = 240;
-pub const SCREEN_SIZE:  u32 = 160;
+pub const SCREEN_WIDTH:  u32 = 240;
+pub const SCREEN_HEIGHT: u32 = 160;
+pub const SCREEN_SIZE:   u32 = 240 * 160;

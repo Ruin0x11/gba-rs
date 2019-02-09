@@ -24,8 +24,6 @@ fn main() {
 
     let mut target = "gba".into();
 
-    // build ROM
-
     let mut build_args = vec![
         "--manifest-path".into(),
         "../Cargo.toml".into(),
@@ -54,6 +52,8 @@ fn main() {
         build_args.push(example);
     }
 
+    // Build target with cargo-xbuild.
+
     println!("Running xbuild for target '{}'.", target);
 
     let exit_status = run_xbuild(&build_args);
@@ -61,14 +61,14 @@ fn main() {
         process::exit(1)
     }
 
+    // Strip header section of ELF and extract program data
+
     let elf_target = format!("../target/thumbv7-gba-cart/release/{}", target);
     let elf_path = Path::new(&elf_target);
     let mut elf_bytes = Vec::new();
     File::open(elf_path)
         .and_then(|mut f| f.read_to_end(&mut elf_bytes))
         .expect("failed to read bootloader ELF file");
-
-    // Strip header section of ELF and extract program data
 
     let elf_file = xmas_elf::ElfFile::new(&elf_bytes).unwrap();
     xmas_elf::header::sanity_check(&elf_file).unwrap();
@@ -79,7 +79,7 @@ fn main() {
     let init_offset = init_section.offset() as usize + 0xc0; // add header offset
     let program_bytes = &elf_bytes[init_offset..];
 
-    // create output file
+    // Create output file by writing GBA header, then program data.
 
     let output_target = format!("../target/thumbv7-gba-cart/release/{}.gba", target);
     let output_file_path = Path::new(&output_target);

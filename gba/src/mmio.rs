@@ -12,20 +12,20 @@ register_bitfields! [u16,
             BitmapMode4 = 4,
             BitmapMode5 = 5
         ],
-        CGB_MODE OFFSET(3) NUMBITS(1) [
+        GB_MODE OFFSET(3) NUMBITS(1) [
             Gba = 0,
             Cgb = 1
         ],
-        DISP_FRAME OFFSET(4) NUMBITS(1) [
+        FRM_SEL OFFSET(4) NUMBITS(1) [
             Frame0 = 0,
             Frame1 = 1
         ],
-        HBLANK_INTERVAL_FREE OFFSET(5) NUMBITS(1) [],
-        OBJ_CHARA_VRAM_MAPPING OFFSET(6) NUMBITS(1) [
+        OAM_HBL OFFSET(5) NUMBITS(1) [],
+        OBJ_DIM OFFSET(6) NUMBITS(1) [
             TwoDimensional = 0,
             OneDimensional = 1
         ],
-        FORCED_BLANK OFFSET(7) NUMBITS(1) [],
+        FORCE_HBL OFFSET(7) NUMBITS(1) [],
         SCR_MODE OFFSET(8) NUMBITS(5) [
             Bg0 = 1,
             Bg1 = 2,
@@ -33,16 +33,32 @@ register_bitfields! [u16,
             Bg3 = 8,
             Obj = 16
         ],
-        WIN_0_DISP OFFSET(13) NUMBITS(1) [],
-        WIN_1_DISP OFFSET(14) NUMBITS(1) [],
-        OBJ_WIN_DISP OFFSET(15) NUMBITS(1) []
+        WIN_MODE OFFSET(13) NUMBITS(3) [
+            Win0 = 1,
+            Win1 = 2,
+            Obj = 4
+        ]
+    ],
+    Dispstat [
+        VBLANK OFFSET(0) NUMBITS(1) [],
+        HBLANK OFFSET(1) NUMBITS(1) [],
+        VCOUNTER OFFSET(2) NUMBITS(1) [],
+        VBL_IRQ OFFSET(3) NUMBITS(1) [],
+        HBL_IRQ OFFSET(4) NUMBITS(1) [],
+        VCT_IRQ OFFSET(5) NUMBITS(1) [],
+        VCOUNT OFFSET(8) NUMBITS(8) []
+    ],
+    Vcount [
+        SCANLINE OFFSET(0) NUMBITS(8) []
     ]
 ];
 
 #[allow(non_snake_case)]
 #[repr(C)]
 pub struct Mmio {
-    pub dispcnt: ReadWrite<u16, Dispcnt::Register>, // 0x00
+    pub dispcnt: ReadWrite<u16, Dispcnt::Register>,   // 0x00
+    pub dispstat: ReadWrite<u16, Dispstat::Register>, // 0x04
+    pub vcount: ReadWrite<u16, Vcount::Register>,     // 0x06
 }
 
 pub fn get<'a>() -> &'a Mmio {
