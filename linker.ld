@@ -56,6 +56,12 @@ SECTIONS
         __iwram_end__ = ABSOLUTE(.) ;
     } >iwram = 0xff
 
+    .got :
+    {
+        *(.got.plt)
+        *(.got)
+    } >iwram = 0
+
     .bss ALIGN(4) (NOLOAD) :
     {
         __bss_start = ABSOLUTE(.);

@@ -4,6 +4,8 @@
 pub mod consts;
 pub mod mmio;
 pub mod util;
+pub mod input;
+pub mod video;
 
 #[lang = "eh_personality"]
 fn eh_personality() {}
