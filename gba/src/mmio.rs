@@ -47,16 +47,59 @@ register_bitfields! [u16,
         HBL_IRQ   OFFSET(4) NUMBITS(1) [],
         VCT_IRQ   OFFSET(5) NUMBITS(1) [],
         VCT_OPT   OFFSET(8) NUMBITS(8) []
+    ],
+    Bgxcnt [
+        PRIORITY OFFSET(0) NUMBITS(2) [],
+        CHAR_BASE_BLK OFFSET(2) NUMBITS(2) [],
+        MOSAIC OFFSET(6) NUMBITS(1) [],
+        COLORS OFFSET(7) NUMBITS(1) [
+            COLOR_16_16 = 0,
+            COLOR_256_1 = 1
+        ],
+        SCRN_BASE_BLK OFFSET(8) NUMBITS(5) [],
+        DISP_OVERFLOW OFFSET(13) NUMBITS(1) [
+            Transp = 0,
+            Wrap = 1
+        ],
+
+        // NOTE: Used when video mode is text
+        SIZE_TEXT OFFSET(14) NUMBITS(2) [
+            Size256_256 = 0,
+            Size512_256 = 1,
+            Size256_512 = 2,
+            Size512_512 = 3
+        ],
+        // NOTE: Used when video mode is affine
+        SIZE_AFFINE OFFSET(14) NUMBITS(2) [
+            Size128_128 = 0,
+            Size256_256 = 1,
+            Size512_512 = 2,
+            Size1024_1024 = 3
+        ]
     ]
 ];
 
-#[allow(non_snake_case)]
 #[repr(C)]
 pub struct Mmio {
     pub dispcnt: ReadWrite<u16, Dispcnt::Register>,   // 0x00
     _dummy: u16,
     pub dispstat: ReadWrite<u16, Dispstat::Register>, // 0x04
-    pub vcount: ReadOnly<u8>                          // 0x06
+    pub vcount: ReadOnly<u8>,                         // 0x06
+    _dummy2: u8,                                      // 0x07
+
+    pub bg0cnt: ReadWrite<u16, Bgxcnt::Register>,     // 0x08
+    pub bg1cnt: ReadWrite<u16, Bgxcnt::Register>,     // 0x0A
+    pub bg2cnt: ReadWrite<u16, Bgxcnt::Register>,     // 0x0C
+    pub bg3cnt: ReadWrite<u16, Bgxcnt::Register>,     // 0x0E
+
+    pub bg0hofs: WriteOnly<u16>,    // 0x10
+    pub bg0vofs: WriteOnly<u16>,    // 0x12
+    pub bg1hofs: WriteOnly<u16>,    // 0x14
+    pub bg1vofs: WriteOnly<u16>,    // 0x16
+    pub bg2hofs: WriteOnly<u16>,    // 0x18
+    pub bg2vofs: WriteOnly<u16>,    // 0x1A
+    pub bg3hofs: WriteOnly<u16>,    // 0x1C
+    pub bg3vofs: WriteOnly<u16>,    // 0x1E
 }
 
 #[inline]

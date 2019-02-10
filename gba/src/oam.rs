@@ -1,4 +1,5 @@
 use register::{mmio::*, register_bitfields};
+use core::ptr;
 use crate::consts;
 
 register_bitfields! [u16,
@@ -76,13 +77,21 @@ register_bitfields! [u16,
     ]
 ];
 
-pub fn init() {
+pub fn copy_objs(objs: &[ObjAttr]) {
+    let src = objs.as_ptr() as *const u32;
+    let dst = consts::MEM_OAM_START as *mut u32;
 
+    unsafe {
+        ptr::copy_nonoverlapping(src, dst, objs.len());
+    }
 }
 
-#[inline]
-pub fn screen_block(page: usize, tile: usize) -> *mut Tile {
-    (consts::VRAM_BG_START + page * 512 * 4 + tile * 4) as *mut Tile
+pub fn init_objs(objs: &mut [ObjAttr]) {
+    for obj in objs.iter_mut() {
+        obj.attr0.write(Attr0::OBJ_DISABLE::Disabled);
+    }
+
+    copy_objs(objs);
 }
 
 #[repr(C)]

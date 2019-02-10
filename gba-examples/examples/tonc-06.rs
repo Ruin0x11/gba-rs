@@ -3,26 +3,9 @@
 
 extern crate panic_halt;
 
-use gba::{consts, mmio::{self, Dispcnt}, input::{self, Keyinput}, video, oam::*, util};
+use gba::{consts, mmio::{self, Dispcnt}, input::{self, Keyinput}, video, oam::{self, *}, util};
 use boot::entry;
 use core::{ptr, mem};
-
-fn oam_copy(objs: &[ObjAttr]) {
-    let src = objs.as_ptr() as *const u32;
-    let dst = consts::MEM_OAM_START as *mut u32;
-
-    unsafe {
-        ptr::copy_nonoverlapping(src, dst, objs.len());
-    }
-}
-
-fn oam_init(objs: &mut [ObjAttr]) {
-    for obj in objs.iter_mut() {
-        obj.attr0.write(Attr0::OBJ_DISABLE::Disabled);
-    }
-
-    oam_copy(objs);
-}
 
 #[entry]
 fn main() -> ! {
@@ -42,7 +25,7 @@ fn main() -> ! {
     mmio.dispcnt.write(Dispcnt::SCR_MODE::Obj + Dispcnt::OBJ_DIM::OneDim);
 
     let mut obj_buffer: [ObjAttr; 128] = unsafe { mem::uninitialized() };
-    oam_init(&mut obj_buffer);
+    oam::init_objs(&mut obj_buffer);
 
     let mut x = 96;
     let mut y = 32;
@@ -99,7 +82,7 @@ fn main() -> ! {
 
         }
 
-        oam_copy(&obj_buffer[0..2]);
+        oam::copy_objs(&obj_buffer[0..2]);
 
         prev_keys = curr_keys;
     }

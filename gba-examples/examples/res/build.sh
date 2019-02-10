@@ -9,3 +9,5 @@
 /opt/devkitpro/tools/bin/grit gba.png -gu32 -gb -gB8 -p -pu32 -pn16 -ftb -fh! -ogba_pic
 
 /opt/devkitpro/tools/bin/grit metr.png -gu32 -gt -gB4 -ar64 -p -pu32 -pn32 -ftb -fh!
+
+/opt/devkitpro/tools/bin/grit brin-full.png -gu16 -gt -gB4 -p -pu16 -pn256 -m -mu16 -mLs -mRtpf -ftb -fh! -obrin
