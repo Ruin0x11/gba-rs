@@ -56,10 +56,13 @@ SECTIONS
         __iwram_end__ = ABSOLUTE(.) ;
     } >iwram = 0xff
 
-    .got :
+    __got_lma = __iwram_lma + SIZEOF(.iwram);
+
+    .got : AT(__got_lma)
     {
         *(.got.plt)
         *(.got)
+        . = ALIGN(4);
     } >iwram = 0
 
     .bss ALIGN(4) (NOLOAD) :
@@ -75,7 +78,7 @@ SECTIONS
 
 /******************************* DATA *******************************/
 
-    __data_lma = __iwram_lma + SIZEOF(.iwram);
+    __data_lma = __got_lma + SIZEOF(.got);
 
     .data ALIGN(4) : AT(__data_lma)
     {

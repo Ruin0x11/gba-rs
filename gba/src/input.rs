@@ -1,5 +1,8 @@
 use register::{mmio::*, register_bitfields};
+use tock_registers::registers::Field;
 use crate::consts;
+
+const KEY_MASK: u16 = 0x03ff;
 
 register_bitfields! [u16,
     /// Key status
@@ -25,4 +28,29 @@ pub fn get<'a>() -> &'a Input {
     let input = consts::REG_KEYINPUT as *const Input;
 
     unsafe { &*input }
+}
+
+#[inline]
+pub fn poll() -> u16 {
+    !(get().get() & KEY_MASK)
+}
+
+#[inline]
+pub fn was_hit_now(curr: u16, prev: u16, reg: Field<u16, Keyinput::Register>) -> bool {
+    (curr & !prev) & (reg.mask << reg.shift) != 0
+}
+
+#[inline]
+pub fn was_released_now(curr: u16, prev: u16, reg: Field<u16, Keyinput::Register>) -> bool {
+    (!curr & prev) & (reg.mask << reg.shift) != 0
+}
+
+#[inline]
+pub fn is_held(curr: u16, prev: u16, reg: Field<u16, Keyinput::Register>) -> bool {
+    (curr & prev) & (reg.mask << reg.shift) != 0
+}
+
+#[inline]
+pub fn key(index: usize) -> Field<u16, Keyinput::Register> {
+    Field::<u16, Keyinput::Register>::new(1, index)
 }

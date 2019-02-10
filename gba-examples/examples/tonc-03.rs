@@ -7,7 +7,7 @@ use gba::{consts, mmio::{self, Dispcnt}, input::{self, Keyinput}, video};
 use boot::entry;
 use core::ptr;
 
-fn load_gfx() {
+fn load_graphics() {
     // VRAM writes must be u16 or u32.
     let page1 = consts::MODE4_PAGE1 as *mut u16;
     let page2 = consts::MODE4_PAGE2 as *mut u16;
@@ -34,7 +34,7 @@ fn load_gfx() {
 
 #[entry]
 fn main() -> ! {
-    load_gfx();
+    load_graphics();
 
     let mmio = mmio::get_mut();
     mmio.dispcnt.write(Dispcnt::SCR_MODE::Bg2 + Dispcnt::BG_MODE::BitmapMode4);
