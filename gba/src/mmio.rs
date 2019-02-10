@@ -53,8 +53,8 @@ register_bitfields! [u16,
         CHAR_BASE_BLK OFFSET(2) NUMBITS(2) [],
         MOSAIC OFFSET(6) NUMBITS(1) [],
         COLORS OFFSET(7) NUMBITS(1) [
-            COLOR_16_16 = 0,
-            COLOR_256_1 = 1
+            Color16_16 = 0,
+            Color256_1 = 1
         ],
         SCRN_BASE_BLK OFFSET(8) NUMBITS(5) [],
         DISP_OVERFLOW OFFSET(13) NUMBITS(1) [

@@ -11,3 +11,6 @@
 /opt/devkitpro/tools/bin/grit metr.png -gu32 -gt -gB4 -ar64 -p -pu32 -pn32 -ftb -fh!
 
 /opt/devkitpro/tools/bin/grit brin-full.png -gu16 -gt -gB4 -p -pu16 -pn256 -m -mu16 -mLs -mRtpf -ftb -fh! -obrin
+
+/opt/devkitpro/tools/bin/grit cbb_ids.png -gu32 -gt -gB8 -p! -ar72 -at8 -ab16 -ftb -fh! -oids8
+/opt/devkitpro/tools/bin/grit cbb_ids.png -gu32 -gt -gB4 -p -pu32 -pn16 -ar40 -ab8 -ftb -fh! -oids4

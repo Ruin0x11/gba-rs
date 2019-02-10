@@ -26,8 +26,8 @@ register_bitfields! [u16,
         ],
         OBJ_MOSAIC OFFSET(12) NUMBITS(1) [],
         COLORS     OFFSET(13) NUMBITS(1) [
-            COLOR_16_16 = 0,
-            COLOR_256_1 = 1
+            Color16_16 = 0,
+            Color256_1 = 1
         ],
         OBJ_SHAPE OFFSET(14) NUMBITS(2) [
             Square = 0,
