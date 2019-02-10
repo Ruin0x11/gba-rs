@@ -10,7 +10,7 @@ use core::ptr;
 const KEY_MAX: usize = 10;
 const BTN_PAL_ID: usize = 5;
 
-fn set_palette(index: usize, color: u16) {
+fn write_palette(index: usize, color: u16) {
     unsafe {
         *((consts::MEM_PAL_START + index * 2) as *mut u16) = color;
     }
@@ -33,7 +33,7 @@ fn main() -> ! {
     let mmio = mmio::get_mut();
     mmio.dispcnt.write(Dispcnt::SCR_MODE::Bg2 + Dispcnt::BG_MODE::BitmapMode4);
 
-    set_palette(0, 0);
+    write_palette(0, 0);
 
     let mut curr_keys = 0;
     let mut prev_keys = 0;
@@ -63,7 +63,7 @@ fn main() -> ! {
                 util::rgb15(27, 27, 29)
             };
 
-            set_palette(i + BTN_PAL_ID, color);
+            write_palette(i + BTN_PAL_ID, color);
         }
 
         frame = frame + 1;

@@ -22,3 +22,7 @@ pub extern "C" fn __aeabi_unwind_cpp_pr0() {}
 
 #[no_mangle]
 pub extern "C" fn __aeabi_unwind_cpp_pr1() {}
+
+#[no_mangle]
+pub extern "C" fn __sync_synchronize() {
+}

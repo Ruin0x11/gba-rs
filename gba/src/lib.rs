@@ -5,6 +5,7 @@ pub mod consts;
 pub mod input;
 pub mod mmio;
 pub mod oam;
+pub mod tile;
 pub mod util;
 pub mod video;
 

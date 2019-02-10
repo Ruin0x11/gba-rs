@@ -96,12 +96,6 @@ pub fn init_objs(objs: &mut [ObjAttr]) {
 
 #[repr(C)]
 #[repr(align(4))]
-pub struct Tile {
-    pub data: [u32; 4]
-}
-
-#[repr(C)]
-#[repr(align(4))]
 pub struct ObjAttr {
     pub attr0: ReadWrite<u16, Attr0::Register>,
     pub attr1: ReadWrite<u16, Attr1::Register>,
