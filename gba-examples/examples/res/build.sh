@@ -7,3 +7,5 @@
 /opt/devkitpro/tools/bin/grit modes.png -g! -gu16 -gb -gB8 -ftb -p -pn16 -fh!
 
 /opt/devkitpro/tools/bin/grit gba.png -gu32 -gb -gB8 -p -pu32 -pn16 -ftb -fh! -ogba_pic
+
+/opt/devkitpro/tools/bin/grit metr.png -gu32 -gt -gB4 -ar64 -p -pu32 -pn32 -ftb -fh!

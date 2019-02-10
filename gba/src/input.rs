@@ -1,6 +1,6 @@
 use register::{mmio::*, register_bitfields};
 use tock_registers::registers::Field;
-use crate::consts;
+use crate::{consts, util};
 
 const KEY_MASK: u16 = 0x03ff;
 
@@ -21,6 +21,7 @@ register_bitfields! [u16,
 ];
 
 pub type Input = ReadOnly<u16, Keyinput::Register>;
+pub type Key = Field<u16, Keyinput::Register>;
 
 
 #[inline]
@@ -36,21 +37,37 @@ pub fn poll() -> u16 {
 }
 
 #[inline]
-pub fn was_hit_now(curr: u16, prev: u16, reg: Field<u16, Keyinput::Register>) -> bool {
+pub fn was_hit_now(curr: u16, prev: u16, reg: Key) -> bool {
     (curr & !prev) & (reg.mask << reg.shift) != 0
 }
 
 #[inline]
-pub fn was_released_now(curr: u16, prev: u16, reg: Field<u16, Keyinput::Register>) -> bool {
+pub fn was_released_now(curr: u16, prev: u16, reg: Key) -> bool {
     (!curr & prev) & (reg.mask << reg.shift) != 0
 }
 
 #[inline]
-pub fn is_held(curr: u16, prev: u16, reg: Field<u16, Keyinput::Register>) -> bool {
+pub fn is_held(curr: u16, prev: u16, reg: Key) -> bool {
     (curr & prev) & (reg.mask << reg.shift) != 0
 }
 
 #[inline]
-pub fn key(index: usize) -> Field<u16, Keyinput::Register> {
-    Field::<u16, Keyinput::Register>::new(1, index)
+pub fn key(index: usize) -> Key {
+    Key::new(1, index)
+}
+
+
+#[inline]
+pub fn tri_pad_horz() -> i16 {
+    util::tri_flag::<Keyinput::Register>(get(), Keyinput::PAD_RIGHT, Keyinput::PAD_LEFT)
+}
+
+#[inline]
+pub fn tri_pad_vert() -> i16 {
+    util::tri_flag::<Keyinput::Register>(get(), Keyinput::PAD_DOWN, Keyinput::PAD_UP)
+}
+
+#[inline]
+pub fn tri_pad_lr() -> i16 {
+    util::tri_flag::<Keyinput::Register>(get(), Keyinput::BUTTON_R, Keyinput::BUTTON_L)
 }

@@ -19,3 +19,6 @@ pub fn heap_start() -> *mut u32 {
 
 #[no_mangle]
 pub extern "C" fn __aeabi_unwind_cpp_pr0() {}
+
+#[no_mangle]
+pub extern "C" fn __aeabi_unwind_cpp_pr1() {}

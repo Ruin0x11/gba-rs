@@ -22,8 +22,8 @@ register_bitfields! [u16,
         ],
         OAM_HBL   OFFSET(5) NUMBITS(1) [],
         OBJ_DIM   OFFSET(6) NUMBITS(1) [
-            TwoDimensional = 0,
-            OneDimensional = 1
+            TwoDim = 0,
+            OneDim = 1
         ],
         FORCE_HBL OFFSET(7) NUMBITS(1) [],
         SCR_MODE  OFFSET(8) NUMBITS(5) [

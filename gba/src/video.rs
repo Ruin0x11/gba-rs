@@ -1,5 +1,4 @@
-use crate::mmio::{self, Dispcnt};
-use crate::consts;
+use crate::{consts, mmio::{self, Dispcnt}, util};
 
 static mut VIDEO_PAGE: usize = consts::MODE4_PAGE2;
 
@@ -18,8 +17,7 @@ pub fn flip_frames() -> *const u16 {
     }
 
     let mmio = mmio::get_mut();
-    let val = mmio.dispcnt.read(Dispcnt::FRM_SEL);
-    mmio.dispcnt.modify(Dispcnt::FRM_SEL.val(val ^ 1));
+    util::flip_flag(&mmio.dispcnt, Dispcnt::FRM_SEL);
 
     unsafe {
         return VIDEO_PAGE as *const u16;
