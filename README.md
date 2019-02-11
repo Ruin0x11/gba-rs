@@ -1,6 +1,6 @@
 # gba-rs
 
-A crate for running Rust code on the Gameboy Advance. *Highly experimental*.
+A crate for running Rust code on the Game Boy Advance. *Highly experimental*.
 
 It consists of two parts: `gba-boot`, which initializes parts of memory and jumps to the entry point, and a hardware abstraction library `gba`.
 

@@ -1,6 +1,7 @@
 use crate::obj_aff::Fixed;
 
-pub static SIN_LUT: [u16; 514] = [
+#[allow(overflowing_literals)]
+pub static SIN_LUT: [i16; 514] = [
     0x0000, 0x0032, 0x0064, 0x0096, 0x00C8, 0x00FB, 0x012D, 0x015F,
     0x0191, 0x01C3, 0x01F5, 0x0227, 0x0259, 0x028A, 0x02BC, 0x02ED,
     0x031F, 0x0350, 0x0381, 0x03B2, 0x03E3, 0x0413, 0x0444, 0x0474,
@@ -94,14 +95,18 @@ mod test {
     }
 
     #[test]
+    #[allow(overflowing_literals)]
     fn test_sin() {
-        assert_eq_hex!(Fixed::from_bits(0x0032), sin(0x0080));
-        assert_eq_hex!(Fixed::from_bits(0x067B), sin(0x1111));
+        assert_eq_hex!(0x00000032, sin(0x0080).to_bits());
+        assert_eq_hex!(0xFFFFFFCE, sin(0xFF80).to_bits());
+        assert_eq_hex!(0x0000067B, sin(0x1111).to_bits());
     }
 
     #[test]
+    #[allow(overflowing_literals)]
     fn test_cos() {
-        assert_eq_hex!(Fixed::from_bits(0x0FFF), cos(0x0080));
-        assert_eq_hex!(Fixed::from_bits(0x0EA0), cos(0x1111));
+        assert_eq_hex!(0x00000FFF, cos(0x0080).to_bits());
+        assert_eq_hex!(0x00000FFF, cos(0xFF80).to_bits());
+        assert_eq_hex!(0x00000EA0, cos(0x1111).to_bits());
     }
 }

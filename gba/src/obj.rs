@@ -1,6 +1,6 @@
 use register::{mmio::*, register_bitfields};
-use core::ptr;
-use crate::consts;
+use core::cmp;
+use crate::{consts, obj_aff::{Fixed, FixedInner}};
 
 register_bitfields! [u16,
     Attr0 [
@@ -78,11 +78,17 @@ register_bitfields! [u16,
 ];
 
 pub fn copy_slice(objs: &[ObjAttr]) {
-    let src = objs.as_ptr() as *const u32;
-    let dst = consts::MEM_OAM_START as *mut u32;
+    let mut src = objs.as_ptr() as *const ObjAttr;
+    let mut dst = consts::MEM_OAM_START as *mut ObjAttr;
 
-    unsafe {
-        ptr::copy_nonoverlapping(src, dst, objs.len());
+    for _ in 0..(cmp::min(objs.len(), consts::OAM_MAX_OBJ)) {
+        unsafe {
+            (*dst).attr0.set((*src).attr0.get());
+            (*dst).attr1.set((*src).attr1.get());
+            (*dst).attr2.set((*src).attr2.get());
+            src = src.add(1);
+            dst = dst.add(1);
+        }
     }
 }
 
@@ -90,8 +96,6 @@ pub fn init_slice(objs: &mut [ObjAttr]) {
     for obj in objs.iter_mut() {
         obj.attr0.write(Attr0::OBJ_DISABLE::Disabled);
     }
-
-    copy_slice(objs);
 }
 
 #[repr(C)]
@@ -100,7 +104,9 @@ pub struct ObjAttr {
     pub attr0: ReadWrite<u16, Attr0::Register>,
     pub attr1: ReadWrite<u16, Attr1::Register>,
     pub attr2: ReadWrite<u16, Attr2::Register>,
-    _fill: u16,
+
+    // Four interleaved affine attributes of four ObjAttrs make up a single affine parameter.
+    pub aff: FixedInner,
 }
 
 impl ObjAttr {

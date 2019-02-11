@@ -36,7 +36,7 @@ pub const PAK_RAM_SIZE:        usize = 0x00010000; /// Size of GamePak SRAM.
 // Screen
 pub const SCREEN_WIDTH:  u32 = 240;
 pub const SCREEN_HEIGHT: u32 = 160;
-pub const SCREEN_SIZE:   u32 = 240 * 160;
+pub const SCREEN_SIZE:   u32 = SCREEN_WIDTH * SCREEN_HEIGHT;
 
 // Page flipping
 pub const MODE3_PAGE_SIZE: usize = 0x14000;
@@ -56,7 +56,11 @@ pub const VRAM_OBJ_START: usize = VRAM_BG_START + VRAM_BG_SIZE;
 pub const VRAM_OBJ_SIZE:  usize = 0x08000;
 
 // PAL
-pub const PAL_BG_START: usize = MEM_PAL_START;
-pub const PAL_BG_SIZE: usize = 0x200;
+pub const PAL_BG_START:  usize = MEM_PAL_START;
+pub const PAL_BG_SIZE:   usize = 0x200;
 pub const PAL_OBJ_START: usize = MEM_PAL_START + PAL_BG_SIZE;
-pub const PAL_OBJ_SIZE: usize = 0x200;
+pub const PAL_OBJ_SIZE:  usize = 0x200;
+
+// OAM
+pub const OAM_MAX_OBJ:    usize = 128;
+pub const OAM_MAX_AFFINE: usize = 32;

@@ -70,7 +70,7 @@ pub unsafe fn cpu_set(src: *const u32, dst: *mut u32, mode: u32) {
 
 #[inline]
 pub unsafe fn cpu_fast_set(src: *const u32, dst: *mut u32, mode: u32) {
-    asm!("swi #0x0C" : : "{r0}" (src), "{r1}" (dst), "{r2}" (mode) : "r0", "r1", "r3");
+    asm!("swi #0x0C" : : "{r0}" (src), "{r1}" (dst), "{r2}" (mode));
 }
 
 #[inline]

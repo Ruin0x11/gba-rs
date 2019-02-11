@@ -35,7 +35,7 @@ fn main() -> ! {
         metr.attr1.write(Attr1::OBJ_SIZE::Square64);
     }
 
-    obj::copy_slice(obj_buffer);
+    obj::copy_slice(&obj_buffer);
 
     loop {
         video::vsync();
@@ -49,16 +49,16 @@ fn main() -> ! {
         {
             let metr = &mut obj_buffer[0];
 
-            if input::was_hit_now(curr_keys, prev_keys, Keyinput::BUTTON_A)
+            if input::was_hit_now(curr_keys, prev_keys, Keyinput::BUTTON_A::SET)
             {
                 util::flip_flag(&metr.attr1, Attr1::FLIP_HORZ);
             }
-            if input::was_hit_now(curr_keys, prev_keys, Keyinput::BUTTON_B)
+            if input::was_hit_now(curr_keys, prev_keys, Keyinput::BUTTON_B::SET)
             {
                 util::flip_flag(&metr.attr1, Attr1::FLIP_VERT);
             }
 
-            if input::is_held(curr_keys, prev_keys, Keyinput::SELECT)
+            if input::is_held(curr_keys, prev_keys, Keyinput::SELECT::SET)
             {
                 pal_id = 1;
             }
@@ -67,7 +67,7 @@ fn main() -> ! {
                 pal_id = 0;
             }
 
-            if input::was_hit_now(curr_keys, prev_keys, Keyinput::START)
+            if input::was_hit_now(curr_keys, prev_keys, Keyinput::START::SET)
             {
                 util::flip_flag(&mmio.dispcnt, Dispcnt::OBJ_DIM);
             }

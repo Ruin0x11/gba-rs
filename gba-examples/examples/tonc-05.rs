@@ -3,17 +3,11 @@
 
 extern crate panic_halt;
 
-use gba::{consts, data, mmio::{self, Dispcnt}, input, util, video};
+use gba::{data, mmio::{self, Dispcnt}, input, util, video};
 use gba_boot::entry;
 
 const KEY_MAX: usize = 10;
 const BTN_PAL_ID: usize = 5;
-
-fn write_palette(index: usize, color: u16) {
-    unsafe {
-        *((consts::MEM_PAL_START + index * 2) as *mut u16) = color;
-    }
-}
 
 #[entry]
 fn main() -> ! {
@@ -28,7 +22,9 @@ fn main() -> ! {
     let mmio = mmio::get_mut();
     mmio.dispcnt.write(Dispcnt::SCR_MODE::Bg2 + Dispcnt::BG_MODE::BitmapMode4);
 
-    write_palette(0, 0);
+    unsafe {
+        data::load_bg_pal_color(0, 0, 0);
+    }
 
     let mut curr_keys = 0;
     let mut prev_keys = 0;
@@ -58,7 +54,9 @@ fn main() -> ! {
                 util::rgb15(27, 27, 29)
             };
 
-            write_palette(i + BTN_PAL_ID, color);
+            unsafe {
+                data::load_bg_pal_color(0, i + BTN_PAL_ID, color);
+            }
         }
 
         frame = frame + 1;

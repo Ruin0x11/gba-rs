@@ -92,14 +92,14 @@ pub struct Mmio {
     pub bg2cnt: ReadWrite<u16, Bgxcnt::Register>,     // 0x0C
     pub bg3cnt: ReadWrite<u16, Bgxcnt::Register>,     // 0x0E
 
-    pub bg0hofs: WriteOnly<u16>,    // 0x10
-    pub bg0vofs: WriteOnly<u16>,    // 0x12
-    pub bg1hofs: WriteOnly<u16>,    // 0x14
-    pub bg1vofs: WriteOnly<u16>,    // 0x16
-    pub bg2hofs: WriteOnly<u16>,    // 0x18
-    pub bg2vofs: WriteOnly<u16>,    // 0x1A
-    pub bg3hofs: WriteOnly<u16>,    // 0x1C
-    pub bg3vofs: WriteOnly<u16>,    // 0x1E
+    pub bg0hofs: WriteOnly<u16>,                      // 0x10
+    pub bg0vofs: WriteOnly<u16>,                      // 0x12
+    pub bg1hofs: WriteOnly<u16>,                      // 0x14
+    pub bg1vofs: WriteOnly<u16>,                      // 0x16
+    pub bg2hofs: WriteOnly<u16>,                      // 0x18
+    pub bg2vofs: WriteOnly<u16>,                      // 0x1A
+    pub bg3hofs: WriteOnly<u16>,                      // 0x1C
+    pub bg3vofs: WriteOnly<u16>,                      // 0x1E
 }
 
 #[inline]

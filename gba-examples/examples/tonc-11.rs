@@ -79,8 +79,8 @@ fn get_affine_new(aff: &mut ObjAffine, state: AffineState, curr_keys: u16, aff_v
     match state {
         AffineState::Null   => aff.identity(),
         AffineState::Rotate => aff.rotate(aff_value.to_bits() as u16),
-        AffineState::ScaleX => aff.scale(Fixed::from_int(1).wrapping_sub(*aff_value), Fixed::from_int(1)),
-        AffineState::ScaleY => aff.scale(Fixed::from_int(1), Fixed::from_int(1).wrapping_sub(*aff_value)),
+        AffineState::ScaleX => aff.scale_inv(Fixed::from_int(1).wrapping_sub(*aff_value), Fixed::from_int(1)),
+        AffineState::ScaleY => aff.scale_inv(Fixed::from_int(1), Fixed::from_int(1).wrapping_sub(*aff_value)),
         AffineState::ShearX => aff.shear_x(*aff_value),
         AffineState::ShearY => aff.shear_y(*aff_value),
     }
@@ -98,10 +98,6 @@ fn main() -> ! {
     let mut obj_buffer: [ObjAttr; 128] = unsafe { mem::uninitialized() };
     obj::init_slice(&mut obj_buffer);
 
-    // The affine data is interleaved with the object attribute data, so it becomes necessary to
-    // use unsafe Rust in order to use modify both kinds at once.
-    let obj_aff_buffer = obj_buffer.as_mut_ptr() as *mut ObjAffine;
-
     {
         let &mut [ref mut metr, ref mut shadow, _..] = &mut obj_buffer;
 
@@ -113,12 +109,18 @@ fn main() -> ! {
         shadow.attr0.write(Attr0::OBJ_SHAPE::Square + Attr0::AFFINE::SET);
         shadow.attr1.write(Attr1::OBJ_SIZE::Square64 + Attr1::AFFINE_ID.val(31));
         shadow.attr2.write(Attr2::PALBANK.val(1));
-        shadow.set_pos(96, 31);
+        shadow.set_pos(96, 32);
     }
 
+    obj::copy_slice(&obj_buffer);
+
+    // The affine data is interleaved with the object attribute data, so it becomes necessary to
+    // use unsafe Rust in order to use modify both kinds at once.
+    let obj_aff_buffer = obj_buffer.as_mut_ptr() as *mut ObjAffine;
     unsafe {
-        obj_aff_buffer.as_mut().unwrap().identity();
-        obj_aff_buffer.add(31).as_mut().unwrap().identity();
+        let mut obj_aff_slice = slice::from_raw_parts_mut(obj_aff_buffer, 32);
+        obj_aff::init_slice(&mut obj_aff_slice);
+        obj_aff::copy_slice(&obj_aff_slice);
     }
 
     let aff_curr = obj_aff_buffer;
@@ -129,14 +131,6 @@ fn main() -> ! {
         aff_base = obj_aff_buffer.add(1);
         aff_new = obj_aff_buffer.add(2);
     }
-
-    unsafe {
-        (*aff_curr).identity();
-        (*aff_base).identity();
-        (*aff_new).identity();
-    }
-
-    obj::copy_slice(&obj_buffer);
 
     let mut x = 96;
     let mut y = 32;
@@ -170,16 +164,15 @@ fn main() -> ! {
             if new_state == aff_state {
                 unsafe {
                     get_affine_new(aff_new.as_mut().unwrap(), aff_state, curr_keys, &mut aff_value);
-
-                    *aff_curr = *aff_base;
+                    aff_curr.as_mut().unwrap().copy_from(aff_base.as_ref().unwrap());
                     aff_curr.as_mut().unwrap().postmul(aff_new.as_ref().unwrap());
                 }
             }
             else
             {
                 unsafe {
-                    *aff_base = *aff_curr;
-                    aff_new.as_mut().unwrap().identity();
+                    aff_base.as_mut().unwrap().copy_from(aff_curr.as_ref().unwrap());
+                    aff_curr.as_mut().unwrap().copy_from(aff_base.as_ref().unwrap());
                     aff_value = Fixed::from_int(0);
                 }
             }
@@ -208,7 +201,7 @@ fn main() -> ! {
 
         obj::copy_slice(&obj_buffer);
         unsafe {
-            obj_aff::copy_slice(slice::from_raw_parts_mut(obj_aff_buffer, 32));
+            obj_aff::copy_slice(slice::from_raw_parts(obj_aff_buffer, 32));
         }
 
         prev_keys = curr_keys;
