@@ -3,7 +3,7 @@
 
 extern crate panic_halt;
 
-use gba::{consts, mmio::{self, Dispcnt}, input::{self, Keyinput}, video};
+use gba::{consts, data, mmio::{self, Dispcnt}, input::{self, Keyinput}, video};
 use boot::entry;
 use core::ptr;
 
@@ -24,11 +24,10 @@ fn load_graphics() {
         }
     }
 
-    let front_pal = include_bytes!("res/front.pal.bin").as_ptr() as *const u32;
-    let pal_bg = consts::MEM_PAL_START as *mut u32;
+    let front_pal = include_bytes!("res/front.pal.bin");
 
     unsafe {
-        pal_bg.copy_from(front_pal, 8);
+        data::load_bg_palette(0, front_pal);
     }
 }
 

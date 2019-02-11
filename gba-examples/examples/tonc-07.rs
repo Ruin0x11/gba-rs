@@ -3,19 +3,8 @@
 
 extern crate panic_halt;
 
-use gba::{consts, mmio::{self, Dispcnt, Bgxcnt}, input, video};
+use gba::{data, mmio::{self, Dispcnt, Bgxcnt}, input, video};
 use boot::entry;
-use core::ptr;
-
-#[inline]
-fn chara_block(index: usize) -> *mut u16 {
-    (consts::VRAM_BG_START + 1024 * index * 16) as *mut u16
-}
-
-#[inline]
-fn screen_block(index: usize) -> *mut u16 {
-    (consts::VRAM_BG_START + 1024 * index * 2) as *mut u16
-}
 
 #[entry]
 fn main() -> ! {
@@ -27,21 +16,15 @@ fn main() -> ! {
     let screen_block_id = 30;
 
     unsafe {
-        ptr::copy_nonoverlapping(brin_bitmap.as_ptr() as *const u16,
-                                 chara_block(chara_block_id),
-                                 brin_bitmap.len() / 2);
-        ptr::copy_nonoverlapping(brin_pal.as_ptr() as *const u16,
-                                 consts::PAL_BG_START as *mut u16,
-                                 brin_pal.len() / 2);
-        ptr::copy_nonoverlapping(brin_map.as_ptr() as *const u16,
-                                 screen_block(screen_block_id),
-                                 brin_map.len() / 2);
+        data::load_tiles(chara_block_id, brin_bitmap);
+        data::load_bg_map(screen_block_id, brin_map);
+        data::load_bg_palette(0, brin_pal);
     }
 
     let mmio = mmio::get_mut();
     mmio.bg0cnt.write(Bgxcnt::CHAR_BASE_BLK.val(chara_block_id as u16)
                     + Bgxcnt::SCRN_BASE_BLK.val(screen_block_id as u16)
-                    + Bgxcnt::COLORS::COLOR_16_16
+                    + Bgxcnt::COLORS::Color16_16
                     + Bgxcnt::SIZE_TEXT::Size512_256);
     mmio.dispcnt.write(Dispcnt::SCR_MODE::Bg0 + Dispcnt::BG_MODE::TileMode0);
 

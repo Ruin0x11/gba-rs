@@ -3,9 +3,8 @@
 
 extern crate panic_halt;
 
-use gba::{consts, mmio::{self, Dispcnt}, input, util, video};
+use gba::{consts, data, mmio::{self, Dispcnt}, input, util, video};
 use boot::entry;
-use core::ptr;
 
 const KEY_MAX: usize = 10;
 const BTN_PAL_ID: usize = 5;
@@ -22,12 +21,8 @@ fn main() -> ! {
     let gba_pic_pal = include_bytes!("res/gba_pic.pal.bin");
 
     unsafe {
-        ptr::copy_nonoverlapping(gba_pic_bitmap.as_ptr() as *const u32,
-                                 consts::MEM_VRAM_START as *mut u32,
-                                 gba_pic_bitmap.len() / 4);
-        ptr::copy_nonoverlapping(gba_pic_pal.as_ptr() as *const u32,
-                                 consts::MEM_PAL_START as *mut u32,
-                                 gba_pic_pal.len() / 4);
+        data::load_bg_bitmap(0, gba_pic_bitmap);
+        data::load_bg_palette(0, gba_pic_pal);
     }
 
     let mmio = mmio::get_mut();

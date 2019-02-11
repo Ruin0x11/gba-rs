@@ -3,7 +3,7 @@
 
 extern crate panic_halt;
 
-use gba::{consts, mmio::{self, Dispcnt, Bgxcnt}, input, tile::{Tile8, ScrEntry, Scrdata}, util, video};
+use gba::{data, mmio::{self, Dispcnt, Bgxcnt}, input, tile::{Tile8, ScrEntry, Scrdata}, util, video};
 use boot::entry;
 use core::slice;
 
@@ -16,41 +16,16 @@ const CROSS_TY: u32 = 10;
 const BG_MAP_SIZE: usize = 32 * 32;
 
 #[inline]
-fn chara_block(index: usize) -> *mut u16 {
-    (consts::VRAM_BG_START + 1024 * index * 16) as *mut u16
-}
-
-#[inline]
 fn screen_block_index(tx: u32, ty: u32, pitch: u32) -> u32 {
     let sbb = (tx >> 5) + (ty >> 5) * (pitch >> 5);
     sbb * 1024 + ((tx & 31) + (ty & 31) * 32)
 }
 
 #[inline]
-fn screen_block<'a>(offset: usize) -> &'a mut [ScrEntry] {
-    let ptr = (consts::VRAM_BG_START + offset * 1024 * 2) as *mut ScrEntry;
-
-    unsafe {
-        slice::from_raw_parts_mut(ptr, 0x1000)
-    }
+unsafe fn screen_entries<'a>(index: usize) -> &'a mut [ScrEntry] {
+    let ptr = data::screen_block(index) as *mut ScrEntry;
+    slice::from_raw_parts_mut(ptr, 0x1000)
 }
-
-#[inline]
-fn write_tile(cblock: usize, tile_id: isize, tile: &[u32]) {
-    let tile_ram = chara_block(cblock) as *mut Tile8;
-
-    unsafe {
-        tile_ram.offset(tile_id).copy_from(tile.as_ptr() as *const Tile8, 1);
-    }
-}
-
-#[inline]
-fn write_palette(palbank: usize, index: usize, color: u16) {
-    unsafe {
-        *((consts::MEM_PAL_START + palbank * 16 * 2 + index * 2) as *mut u16) = color;
-    }
-}
-
 
 #[inline]
 fn init_map(mmio: &mut mmio::Mmio) {
@@ -65,19 +40,21 @@ fn init_map(mmio: &mut mmio::Mmio) {
         [0x00000000, 0x00100100, 0x01100110, 0x00011000, 0x00011000, 0x01100110, 0x00100100, 0x00000000],
     ];
 
-    write_tile(CHARA_BLOCK, 0, &tiles[0]);
-    write_tile(CHARA_BLOCK, 1, &tiles[1]);
+    unsafe {
+        data::load_tile8(CHARA_BLOCK, 0, tiles[0].as_ptr() as *const Tile8);
+        data::load_tile8(CHARA_BLOCK, 1, tiles[1].as_ptr() as *const Tile8);
 
-    write_palette(0, 1, util::rgb15(31,  0,  0));
-    write_palette(1, 1, util::rgb15( 0, 31,  0));
-    write_palette(2, 1, util::rgb15( 0,  0, 31));
-    write_palette(3, 1, util::rgb15(16, 16, 16));
+        data::load_bg_pal_color(0, 1, util::rgb15(31,  0,  0));
+        data::load_bg_pal_color(1, 1, util::rgb15( 0, 31,  0));
+        data::load_bg_pal_color(2, 1, util::rgb15( 0,  0, 31));
+        data::load_bg_pal_color(3, 1, util::rgb15(16, 16, 16));
+    }
 
-    let screen = screen_block(SCREEN_BLOCK);
+    let screen = unsafe { screen_entries(SCREEN_BLOCK) };
     let mut k = 0;
 
     for i in 0..4 {
-        for j in 0..BG_MAP_SIZE {
+        for _ in 0..BG_MAP_SIZE {
             screen[k].write(Scrdata::PALBANK.val(i as u16));
             k += 1;
         }
@@ -99,9 +76,9 @@ fn main() -> ! {
     let mut ty;
     let mut sblock_curr;
     let mut sblock_prev = CROSS_TY * 32 + CROSS_TX;
-    let screen = screen_block(SCREEN_BLOCK);
+    let screen = unsafe { screen_entries(SCREEN_BLOCK) };
 
-    screen[sblock_prev as usize].modify(Scrdata::TILE_ID_TEXT.val(1));
+    screen[sblock_prev as usize].modify(Scrdata::TILE_ID.val(1));
 
     loop {
         video::vsync();
@@ -115,8 +92,8 @@ fn main() -> ! {
 
         sblock_curr = screen_block_index(tx, ty, 64);
         if sblock_curr != sblock_prev {
-            screen[sblock_prev as usize].modify(Scrdata::TILE_ID_TEXT.val(0));
-            screen[sblock_curr as usize].modify(Scrdata::TILE_ID_TEXT.val(1));
+            screen[sblock_prev as usize].modify(Scrdata::TILE_ID.val(0));
+            screen[sblock_curr as usize].modify(Scrdata::TILE_ID.val(1));
             sblock_prev = sblock_curr;
         }
 

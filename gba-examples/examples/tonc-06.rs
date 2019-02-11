@@ -3,9 +3,9 @@
 
 extern crate panic_halt;
 
-use gba::{consts, mmio::{self, Dispcnt}, input::{self, Keyinput}, video, oam::{self, *}, util};
+use gba::{consts, data, mmio::{self, Dispcnt}, input::{self, Keyinput}, video, oam::{self, *}, util};
 use boot::entry;
-use core::{ptr, mem};
+use core::mem;
 
 #[entry]
 fn main() -> ! {
@@ -13,12 +13,8 @@ fn main() -> ! {
     let metr_pal = include_bytes!("res/metr.pal.bin");
 
     unsafe {
-        ptr::copy_nonoverlapping(metr_bitmap.as_ptr() as *const u32,
-                                 consts::VRAM_OBJ_START as *mut u32,
-                                 metr_bitmap.len() / 4);
-        ptr::copy_nonoverlapping(metr_pal.as_ptr() as *const u32,
-                                 consts::PAL_OBJ_START as *mut u32,
-                                 metr_pal.len() / 4);
+        data::load_obj_bitmap(0, metr_bitmap);
+        data::load_obj_palette(0, metr_pal);
     }
 
     let mmio = mmio::get_mut();

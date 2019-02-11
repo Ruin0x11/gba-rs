@@ -3,9 +3,8 @@
 
 extern crate panic_halt;
 
-use gba::{consts, mmio::{self, Dispcnt}, input::{self, Keyinput}, video};
+use gba::{consts, data, mmio::{self, Dispcnt}, input::{self, Keyinput}, video};
 use boot::entry;
-use core::ptr;
 
 #[entry]
 fn main() -> ! {
@@ -17,12 +16,8 @@ fn main() -> ! {
     let modes_pal = include_bytes!("res/modes.pal.bin");
 
     unsafe {
-        ptr::copy_nonoverlapping(modes_bitmap.as_ptr() as *const u16,
-                                 consts::MEM_VRAM_START as *mut u16,
-                                 modes_bitmap.len() / 2);
-        ptr::copy_nonoverlapping(modes_pal.as_ptr() as *const u16,
-                                 consts::MEM_PAL_START as *mut u16,
-                                 modes_pal.len() / 2);
+        data::load_bg_bitmap(0, modes_bitmap);
+        data::load_bg_palette(0, modes_pal);
     }
 
     let mut prev_keys = 0;
@@ -38,6 +33,8 @@ fn main() -> ! {
         else if input::was_hit_now(curr_keys, prev_keys, Keyinput::PAD_RIGHT) && mode < 5 {
             mode = mode + 1;
         }
+
+        unsafe { *(consts::MEM_EWRAM_START as *mut i32) = gba::bios::div(1000, 10).0; }
 
         prev_keys = curr_keys;
 

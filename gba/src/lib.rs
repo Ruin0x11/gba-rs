@@ -1,7 +1,10 @@
+#![feature(asm)]
 #![feature(lang_items)]
 #![no_std]
 
+pub mod bios;
 pub mod consts;
+pub mod data;
 pub mod input;
 pub mod mmio;
 pub mod oam;
