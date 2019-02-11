@@ -3,7 +3,7 @@
 
 extern crate panic_halt;
 
-use gba::{consts, data, mmio::{self, Dispcnt}, input::{self, Keyinput}, video, oam::{self, *}, util};
+use gba::{consts, data, mmio::{self, Dispcnt}, input::{self, Keyinput}, video, obj::{self, *}, util};
 use boot::entry;
 use core::mem;
 
@@ -21,7 +21,7 @@ fn main() -> ! {
     mmio.dispcnt.write(Dispcnt::SCR_MODE::Obj + Dispcnt::OBJ_DIM::OneDim);
 
     let mut obj_buffer: [ObjAttr; 128] = unsafe { mem::uninitialized() };
-    oam::init_objs(&mut obj_buffer);
+    obj::init_slice(&mut obj_buffer);
 
     let mut x = 96;
     let mut y = 32;
@@ -34,6 +34,8 @@ fn main() -> ! {
         metr.attr0.write(Attr0::OBJ_SHAPE::Square);
         metr.attr1.write(Attr1::OBJ_SIZE::Square64);
     }
+
+    obj::copy_slice(obj_buffer);
 
     loop {
         video::vsync();
@@ -78,7 +80,7 @@ fn main() -> ! {
 
         }
 
-        oam::copy_objs(&obj_buffer[0..2]);
+        obj::copy_slice(&obj_buffer[0..2]);
 
         prev_keys = curr_keys;
     }

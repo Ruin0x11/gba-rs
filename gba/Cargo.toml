@@ -7,3 +7,4 @@ edition = "2018"
 [dependencies]
 register = "0.3.2"
 tock-registers = "0.3.0"
+fixed = "0.3.1"

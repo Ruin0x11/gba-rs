@@ -39,7 +39,7 @@ fn main() -> ! {
 
     unsafe {
         font::draw_string(b"hello", 9, 8, 0, SCREEN_BLOCK);
-        font::draw_string(b"horld!", 9, 10, 0, SCREEN_BLOCK);
+        font::draw_string(b"world!", 9, 10, 0, SCREEN_BLOCK);
     }
 
     loop {}

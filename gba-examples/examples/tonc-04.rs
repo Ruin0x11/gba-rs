@@ -27,10 +27,10 @@ fn main() -> ! {
 
         let curr_keys = input::poll();
 
-        if input::was_hit_now(curr_keys, prev_keys, Keyinput::PAD_LEFT) && mode > 3 {
+        if input::was_hit_now(curr_keys, prev_keys, Keyinput::PAD_LEFT::SET) && mode > 3 {
             mode = mode - 1;
         }
-        else if input::was_hit_now(curr_keys, prev_keys, Keyinput::PAD_RIGHT) && mode < 5 {
+        else if input::was_hit_now(curr_keys, prev_keys, Keyinput::PAD_RIGHT::SET) && mode < 5 {
             mode = mode + 1;
         }
 

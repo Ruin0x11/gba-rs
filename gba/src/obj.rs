@@ -5,15 +5,15 @@ use crate::consts;
 register_bitfields! [u16,
     Attr0 [
         POS_Y OFFSET(0) NUMBITS(8) [],
-        ROTATE OFFSET(8) NUMBITS(1) [],
+        AFFINE OFFSET(8) NUMBITS(1) [],
 
-        // NOTE: Used when ROTATE is disabled
+        // NOTE: Used when AFFINE is disabled
         OBJ_DISABLE OFFSET(9) NUMBITS(1) [
             Normal = 0,
             Disabled = 1
         ],
 
-        // NOTE: Used when ROTATE is enabled
+        // NOTE: Used when AFFINE is enabled
         SCALING OFFSET(9) NUMBITS(1) [
             Normal = 0,
             Double = 1
@@ -38,12 +38,12 @@ register_bitfields! [u16,
     Attr1 [
         POS_X OFFSET(0) NUMBITS(9) [],
 
-        // NOTE: Used when ROTATE is enabled
-        ROT_PARAM OFFSET(9) NUMBITS(4) [],
+        // NOTE: Used when Attr0::AFFINE is enabled
+        AFFINE_ID OFFSET(9) NUMBITS(4) [],
 
-        // NOTE: Used when ROTATE is disabled
+        // NOTE: Used when Attr0::AFFINE is disabled
         FLIP_HORZ OFFSET(12) NUMBITS(1) [],
-        // NOTE: Used when ROTATE is disabled
+        // NOTE: Used when Attr0::AFFINE is disabled
         FLIP_VERT OFFSET(13) NUMBITS(1) [],
 
         // OBJ_SHAPE::Square
@@ -72,12 +72,12 @@ register_bitfields! [u16,
         TILE_ID OFFSET(0) NUMBITS(10) [],
         PRIORITY OFFSET(10) NUMBITS(2) [],
 
-        // NOTE: Not used when COLORS is COLOR_256_1
+        // NOTE: Not used when Attr0::COLORS is COLOR_256_1
         PALBANK OFFSET(12) NUMBITS(4) []
     ]
 ];
 
-pub fn copy_objs(objs: &[ObjAttr]) {
+pub fn copy_slice(objs: &[ObjAttr]) {
     let src = objs.as_ptr() as *const u32;
     let dst = consts::MEM_OAM_START as *mut u32;
 
@@ -86,12 +86,12 @@ pub fn copy_objs(objs: &[ObjAttr]) {
     }
 }
 
-pub fn init_objs(objs: &mut [ObjAttr]) {
+pub fn init_slice(objs: &mut [ObjAttr]) {
     for obj in objs.iter_mut() {
         obj.attr0.write(Attr0::OBJ_DISABLE::Disabled);
     }
 
-    copy_objs(objs);
+    copy_slice(objs);
 }
 
 #[repr(C)]
@@ -109,17 +109,4 @@ impl ObjAttr {
         self.attr0.modify(Attr0::POS_Y.val(y));
         self.attr1.modify(Attr1::POS_X.val(x));
     }
-}
-
-#[repr(C)]
-#[repr(align(4))]
-pub struct ObjAffine {
-    _fill0: [u16; 3],
-    pub pa: i16,
-    _fill1: [u16; 3],
-    pub pb: i16,
-    _fill2: [u16; 3],
-    pub pc: i16,
-    _fill3: [u16; 3],
-    pub pd: i16,
 }
