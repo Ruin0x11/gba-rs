@@ -7,7 +7,7 @@ extern crate panic_halt;
 
 use gba::{data,  mmio::{self, Dispcnt}, input::{self, Keyinput},
           obj::{self, *}, obj_aff::{self, Fixed, ObjAffine}, util, video};
-use boot::entry;
+use gba_boot::entry;
 use core::{mem, slice};
 
 #[derive(PartialEq, Eq)]
@@ -98,6 +98,8 @@ fn main() -> ! {
     let mut obj_buffer: [ObjAttr; 128] = unsafe { mem::uninitialized() };
     obj::init_slice(&mut obj_buffer);
 
+    // The affine data is interleaved with the object attribute data, so it becomes necessary to
+    // use unsafe Rust in order to use modify both kinds at once.
     let obj_aff_buffer = obj_buffer.as_mut_ptr() as *mut ObjAffine;
 
     {

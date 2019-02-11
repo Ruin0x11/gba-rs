@@ -4,7 +4,7 @@
 extern crate panic_halt;
 
 use gba::{data, mmio::{self, Dispcnt, Bgxcnt}, input, tile::{Tile8, ScrEntry, Scrdata}, util, video};
-use boot::entry;
+use gba_boot::entry;
 use core::slice;
 
 const CHARA_BLOCK: usize = 0;

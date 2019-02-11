@@ -4,7 +4,7 @@
 extern crate panic_halt;
 
 use gba::{consts, mmio::{self, Dispcnt}, util};
-use boot::entry;
+use gba_boot::entry;
 
 #[inline]
 fn mode3_plot(x: u32, y: u32, color: u16) {

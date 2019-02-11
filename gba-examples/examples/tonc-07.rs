@@ -4,7 +4,7 @@
 extern crate panic_halt;
 
 use gba::{data, mmio::{self, Dispcnt, Bgxcnt}, input, video};
-use boot::entry;
+use gba_boot::entry;
 
 #[entry]
 fn main() -> ! {

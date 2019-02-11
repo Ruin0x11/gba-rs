@@ -1,3 +1,8 @@
 [workspace]
-members = ["boot", "gba", "gba-examples"]
+members = ["gba", "gba-boot", "gba-examples"]
 exclude = ["builder"]
+
+[profile.release]
+codegen-units = 1
+debug = true
+lto = true

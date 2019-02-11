@@ -4,7 +4,7 @@
 extern crate panic_halt;
 
 use gba::{data, mmio::{self, Dispcnt, Bgxcnt}, tile::{Tile4, Tile8, ScrEntry, Scrdata}};
-use boot::entry;
+use gba_boot::entry;
 use core::slice;
 
 const CBLOCK_4BPP: usize = 0;

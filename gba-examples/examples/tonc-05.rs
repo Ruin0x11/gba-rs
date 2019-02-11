@@ -4,7 +4,7 @@
 extern crate panic_halt;
 
 use gba::{consts, data, mmio::{self, Dispcnt}, input, util, video};
-use boot::entry;
+use gba_boot::entry;
 
 const KEY_MAX: usize = 10;
 const BTN_PAL_ID: usize = 5;

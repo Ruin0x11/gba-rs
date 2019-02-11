@@ -4,7 +4,7 @@
 extern crate panic_halt;
 
 use gba::{consts, mmio::{self, Dispcnt}, util};
-use boot::entry;
+use gba_boot::entry;
 
 fn bmp16_line(left: i32, top: i32, right: i32, bottom: i32, color: u16, addr: usize, mut pitch: u32) {
     let mut canvas = (addr + left as usize * 2 + top as usize * pitch as usize) as *mut u16;

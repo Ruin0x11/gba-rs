@@ -8,7 +8,7 @@ const SCREEN_BLOCK: usize = 2;
 
 use gba::{bios::{self, BitUnpack}, data, font, mmio::{self, Dispcnt, Bgxcnt},
           tile::Tile4, util};
-use boot::entry;
+use gba_boot::entry;
 
 #[entry]
 fn main() -> ! {
