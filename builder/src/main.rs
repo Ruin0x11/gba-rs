@@ -23,6 +23,7 @@ fn main() {
     };
 
     let mut target = "gba".into();
+    let mut config: &str = "debug".into();
 
     let mut build_args = vec![
         "--manifest-path".into(),
@@ -39,6 +40,7 @@ fn main() {
     }
     if args.value_of("release").unwrap() {
         build_args.push("--release".into());
+        config = "release".into();
     }
     if let Some(features) = args.optional_value_of("features").unwrap() {
         build_args.push("--features".into());
@@ -63,7 +65,7 @@ fn main() {
 
     // Strip header section of ELF and extract program data
 
-    let elf_target = format!("../target/thumbv7-gba-cart/release/{}", target);
+    let elf_target = format!("../target/thumbv7-gba-cart/{}/{}", config, target);
     let elf_path = Path::new(&elf_target);
     let mut elf_bytes = Vec::new();
     File::open(elf_path)
@@ -81,7 +83,7 @@ fn main() {
 
     // Create output file by writing GBA header, then program data.
 
-    let output_target = format!("../target/thumbv7-gba-cart/release/{}.gba", target);
+    let output_target = format!("../target/thumbv7-gba-cart/{}/{}.gba", config, target);
     let output_file_path = Path::new(&output_target);
 
     println!("Writing output to {}.", output_file_path.display());

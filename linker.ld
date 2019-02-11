@@ -37,12 +37,21 @@ SECTIONS
     .rodata :
     {
         *(.rodata)
+        *(.roda)
+        *(.rodata.*)
         . = ALIGN(4);
     } >rom =0xFF
     .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >rom
     __exidx_start = .;
     .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >rom
     __exidx_end = .;
+
+    .got :
+    {
+        *(.got.plt)
+        *(.got)
+        . = ALIGN(4);
+    } >rom =0xFF
 
 /****************************** IWRAM *******************************/
 
@@ -56,14 +65,14 @@ SECTIONS
         __iwram_end__ = ABSOLUTE(.) ;
     } >iwram = 0xff
 
-    __got_lma = __iwram_lma + SIZEOF(.iwram);
+    /* __got_lma = __iwram_lma + SIZEOF(.iwram); */
 
-    .got : AT(__got_lma)
-    {
-        *(.got.plt)
-        *(.got)
-        . = ALIGN(4);
-    } >iwram = 0
+    /* .got : AT(__got_lma) */
+    /* { */
+    /*     *(.got.plt) */
+    /*     *(.got) */
+    /*     . = ALIGN(4); */
+    /* } >iwram = 0 */
 
     .bss ALIGN(4) (NOLOAD) :
     {
@@ -78,7 +87,7 @@ SECTIONS
 
 /******************************* DATA *******************************/
 
-    __data_lma = __got_lma + SIZEOF(.got);
+    __data_lma = __iwram_lma + SIZEOF(.iwram);
 
     .data ALIGN(4) : AT(__data_lma)
     {

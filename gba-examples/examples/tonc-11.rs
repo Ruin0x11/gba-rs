@@ -126,7 +126,9 @@ fn main() -> ! {
     unsafe {
         aff_base = obj_aff_buffer.add(1);
         aff_new = obj_aff_buffer.add(2);
+    }
 
+    unsafe {
         (*aff_curr).identity();
         (*aff_base).identity();
         (*aff_new).identity();
