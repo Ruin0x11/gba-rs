@@ -41,8 +41,8 @@ fn init_map(mmio: &mut mmio::Mmio) {
     ];
 
     unsafe {
-        data::load_tile8(CHARA_BLOCK, 0, tiles[0].as_ptr() as *const Tile8);
-        data::load_tile8(CHARA_BLOCK, 1, tiles[1].as_ptr() as *const Tile8);
+        data::load_tile8(CHARA_BLOCK, 0, tiles[0].as_ptr() as *const Tile8, 1);
+        data::load_tile8(CHARA_BLOCK, 1, tiles[1].as_ptr() as *const Tile8, 1);
 
         data::load_bg_pal_color(0, 1, util::rgb15(31,  0,  0));
         data::load_bg_pal_color(1, 1, util::rgb15( 0, 31,  0));

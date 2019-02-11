@@ -26,19 +26,19 @@ fn load_tiles() {
     let ids8_tiles = include_bytes!("res/ids8.img.bin").as_ptr() as *const Tile8;
 
     unsafe {
-        data::load_tile4(0, 1, ids4_tiles.add(1));
-        data::load_tile4(0, 2, ids4_tiles.add(2));
-        data::load_tile4(1, 0, ids4_tiles.add(3));
-        data::load_tile4(1, 1, ids4_tiles.add(4));
+        data::load_tile4(0, 1, ids4_tiles.add(1), 1);
+        data::load_tile4(0, 2, ids4_tiles.add(2), 1);
+        data::load_tile4(1, 0, ids4_tiles.add(3), 1);
+        data::load_tile4(1, 1, ids4_tiles.add(4), 1);
 
-        data::load_tile8(2, 1, ids8_tiles.add(1));
-        data::load_tile8(2, 2, ids8_tiles.add(2));
-        data::load_tile8(3, 0, ids8_tiles.add(3));
-        data::load_tile8(3, 1, ids8_tiles.add(4));
-        data::load_tile8(4, 0, ids8_tiles.add(5));
-        data::load_tile8(4, 1, ids8_tiles.add(6));
-        data::load_tile8(5, 0, ids8_tiles.add(7));
-        data::load_tile8(5, 1, ids8_tiles.add(8));
+        data::load_tile8(2, 1, ids8_tiles.add(1), 1);
+        data::load_tile8(2, 2, ids8_tiles.add(2), 1);
+        data::load_tile8(3, 0, ids8_tiles.add(3), 1);
+        data::load_tile8(3, 1, ids8_tiles.add(4), 1);
+        data::load_tile8(4, 0, ids8_tiles.add(5), 1);
+        data::load_tile8(4, 1, ids8_tiles.add(6), 1);
+        data::load_tile8(5, 0, ids8_tiles.add(7), 1);
+        data::load_tile8(5, 1, ids8_tiles.add(8), 1);
     }
 
     let ids4_pal = include_bytes!("res/ids4.pal.bin");

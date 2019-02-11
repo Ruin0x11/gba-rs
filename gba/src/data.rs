@@ -46,17 +46,17 @@ pub unsafe fn load_bg_map(screen_block_id: usize, bytes: &[u8]) {
 }
 
 #[inline]
-pub unsafe fn load_tile4(chara_block_id: usize, tile_id: usize, tiles: *const Tile4) {
+pub unsafe fn load_tile4(chara_block_id: usize, tile_id: usize, tiles: *const Tile4, count: usize) {
     let tile_ram = chara_block(chara_block_id) as *mut Tile4;
 
-    ptr::copy_nonoverlapping(tiles, tile_ram.add(tile_id), 1);
+    ptr::copy_nonoverlapping(tiles, tile_ram.add(tile_id), count);
 }
 
 #[inline]
-pub unsafe fn load_tile8(chara_block_id: usize, tile_id: usize, tiles: *const Tile8) {
+pub unsafe fn load_tile8(chara_block_id: usize, tile_id: usize, tiles: *const Tile8, count: usize) {
     let tile_ram = chara_block(chara_block_id) as *mut Tile8;
 
-    ptr::copy_nonoverlapping(tiles, tile_ram.add(tile_id), 1);
+    ptr::copy_nonoverlapping(tiles, tile_ram.add(tile_id), count);
 }
 
 #[inline]

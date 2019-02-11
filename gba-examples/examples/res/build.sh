@@ -14,3 +14,5 @@
 
 /opt/devkitpro/tools/bin/grit cbb_ids.png -gu32 -gt -gB8 -p! -ar72 -at8 -ab16 -ftb -fh! -oids8
 /opt/devkitpro/tools/bin/grit cbb_ids.png -gu32 -gt -gB4 -p -pu32 -pn16 -ar40 -ab8 -ftb -fh! -oids4
+
+/opt/devkitpro/tools/bin/grit toncfont.bmp -gu32 -gt -gB1 -p! -ftb -fh! -otoncfont

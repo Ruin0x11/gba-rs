@@ -5,6 +5,7 @@
 pub mod bios;
 pub mod consts;
 pub mod data;
+pub mod font;
 pub mod input;
 pub mod mmio;
 pub mod oam;
