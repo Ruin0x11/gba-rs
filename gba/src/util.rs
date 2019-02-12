@@ -7,7 +7,7 @@ pub const fn rgb15(r: u16, g: u16, b: u16) -> u16 {
 }
 
 #[inline]
-pub(crate) fn tri_flag<R>(reg: &ReadOnly<u16, R>, neg: Field<u16, R>, pos: Field<u16, R>) -> i16
+pub fn tri_flag<R>(reg: &ReadOnly<u16, R>, neg: Field<u16, R>, pos: Field<u16, R>) -> i16
 where R: RegisterLongName + Clone
 {
     (reg.read(pos) & 1) as i16 - (reg.read(neg) & 1) as i16

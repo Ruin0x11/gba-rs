@@ -82,6 +82,11 @@ pub fn tri_pad_vert() -> i16 {
 }
 
 #[inline]
+pub fn tri_pad_fire() -> i16 {
+    util::tri_flag::<Keyinput::Register>(get(), Keyinput::BUTTON_A, Keyinput::BUTTON_B)
+}
+
+#[inline]
 pub fn tri_pad_lr() -> i16 {
     util::tri_flag::<Keyinput::Register>(get(), Keyinput::BUTTON_R, Keyinput::BUTTON_L)
 }

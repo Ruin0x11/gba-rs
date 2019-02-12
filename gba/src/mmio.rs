@@ -83,6 +83,32 @@ register_bitfields! [u16,
         BG_SIZE_V  OFFSET(4) NUMBITS(4) [],
         OBJ_SIZE_H OFFSET(8) NUMBITS(4) [],
         OBJ_SIZE_V OFFSET(12) NUMBITS(4) []
+    ],
+    Bldcnt [
+        BG0_TOP OFFSET(0) NUMBITS(1) [],
+        BG1_TOP OFFSET(1) NUMBITS(1) [],
+        BG2_TOP OFFSET(2) NUMBITS(1) [],
+        BG3_TOP OFFSET(3) NUMBITS(1) [],
+        OBJ_TOP OFFSET(4) NUMBITS(1) [],
+        BD_ENABLE  OFFSET(5) NUMBITS(1) [],
+        MODE    OFFSET(6) NUMBITS(2) [
+            None = 0,
+            AlphaBlend = 1,
+            BrightInc = 2,
+            BrightDec = 3
+        ],
+        BG0_BOT OFFSET(8) NUMBITS(1) [],
+        BG1_BOT OFFSET(9) NUMBITS(1) [],
+        BG2_BOT OFFSET(10) NUMBITS(1) [],
+        BG3_BOT OFFSET(11) NUMBITS(1) [],
+        OBJ_BOT OFFSET(12) NUMBITS(1) []
+    ],
+    Bldalpha [
+        EVA OFFSET(0) NUMBITS(5) [],
+        EVB OFFSET(8) NUMBITS(5) []
+    ],
+    Bldy [
+        EVY OFFSET(0) NUMBITS(5) []
     ]
 ];
 
@@ -162,8 +188,7 @@ pub struct Mmio {
     pub dispcnt: ReadWrite<u16, Dispcnt::Register>,   // 0x00
     _dummy: u16,
     pub dispstat: ReadWrite<u16, Dispstat::Register>, // 0x04
-    pub vcount: ReadOnly<u8>,                         // 0x06
-    _dummy2: u8,                                      // 0x07
+    pub vcount: ReadOnly<u16>,                        // 0x06
 
     pub bg0cnt: ReadWrite<u16, Bgxcnt::Register>,     // 0x08
     pub bg1cnt: ReadWrite<u16, Bgxcnt::Register>,     // 0x0A
@@ -179,11 +204,16 @@ pub struct Mmio {
     pub bg3hofs: WriteOnly<u16>,                      // 0x1C
     pub bg3vofs: WriteOnly<u16>,                      // 0x1E
 
-    pub bg2:     BgAffine,                            // 0x20
-    pub bg3:     BgAffine,                            // 0x30
+    pub bg2: BgAffine,                                // 0x20
+    pub bg3: BgAffine,                                // 0x30
 
     _dummy3: [u32; 3],                                // 0x34 - 0x48
-    pub mosaic: WriteOnly<u16, Mosaic::Register>      // 0x4C
+    pub mosaic: WriteOnly<u16, Mosaic::Register>,     // 0x4C
+    _dummy4: u16,
+
+    pub bldcnt: ReadWrite<u16, Bldcnt::Register>,     // 0x50
+    pub bldalpha: ReadWrite<u16, Bldalpha::Register>, // 0x52
+    pub bldy: ReadWrite<u16, Bldy::Register>,         // 0x54
 }
 
 #[inline]

@@ -16,7 +16,7 @@ unsafe fn screen_entries<'a>(index: usize, offset: usize) -> &'a mut [ScrEntry] 
     slice::from_raw_parts_mut(ptr.add(offset), 0x1000)
 }
 
-fn load_metr() {
+fn load_metr(mmio: &mmio::Mmio) {
     let metr_tiles = include_bytes!("res/metr.img.bin");
     let metr_pal = include_bytes!("res/metr.pal.bin");
 
@@ -49,6 +49,10 @@ fn load_metr() {
             screen[y * 32 + x].write(Scrdata::TILE_ID.val(y as u16 * 8 + x as u16) + Scrdata::PALBANK.val(1));
         }
     }
+
+    mmio.bg1cnt.write(Bgxcnt::CHAR_BASE_BLK.val(1)
+                    + Bgxcnt::SCRN_BASE_BLK.val(30)
+                    + Bgxcnt::MOSAIC::SET);
 }
 
 struct Point {
@@ -91,12 +95,11 @@ fn test_mosaic(mmio: &mmio::Mmio) -> !{
 
 #[entry]
 fn main() -> ! {
-    load_metr();
 
     let mmio = mmio::get_mut();
-    mmio.bg1cnt.write(Bgxcnt::CHAR_BASE_BLK.val(1)
-                    + Bgxcnt::SCRN_BASE_BLK.val(30)
-                    + Bgxcnt::MOSAIC::SET);
+
+    load_metr(&mmio);
+
     mmio.dispcnt.write(Dispcnt::BG_MODE::TileMode0
                      + Dispcnt::SCR_MODE::Bg0
                      + Dispcnt::SCR_MODE::Bg1
