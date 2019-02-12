@@ -3,7 +3,7 @@
 
 extern crate panic_halt;
 
-use gba::{data, mmio::{self, Dispcnt, Bgxcnt}, tile::{Tile4, Tile8, ScrEntry, Scrdata}};
+use gba::{data, mmio::{self, Dispcnt, Bgxcnt}, tile::{Tile4, Tile8, Scrdata, ScrEntry}};
 use gba_boot::entry;
 use core::slice;
 

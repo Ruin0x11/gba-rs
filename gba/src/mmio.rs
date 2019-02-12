@@ -77,6 +77,12 @@ register_bitfields! [u16,
             Size512_512 = 2,
             Size1024_1024 = 3
         ]
+    ],
+    Mosaic [
+        BG_SIZE_H  OFFSET(0) NUMBITS(4) [],
+        BG_SIZE_V  OFFSET(4) NUMBITS(4) [],
+        OBJ_SIZE_H OFFSET(8) NUMBITS(4) [],
+        OBJ_SIZE_V OFFSET(12) NUMBITS(4) []
     ]
 ];
 
@@ -150,6 +156,7 @@ impl BgAffine {
     }
 }
 
+// TODO: separate better
 #[repr(C)]
 pub struct Mmio {
     pub dispcnt: ReadWrite<u16, Dispcnt::Register>,   // 0x00
@@ -174,6 +181,9 @@ pub struct Mmio {
 
     pub bg2:     BgAffine,                            // 0x20
     pub bg3:     BgAffine,                            // 0x30
+
+    _dummy3: [u32; 3],                                // 0x34 - 0x48
+    pub mosaic: WriteOnly<u16, Mosaic::Register>      // 0x4C
 }
 
 #[inline]

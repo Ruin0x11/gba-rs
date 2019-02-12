@@ -72,6 +72,18 @@ pub unsafe fn load_obj_pal_color(pal_index: usize, color_index: usize, color: u1
 }
 
 #[inline]
+pub unsafe fn get_bg_pal_color(pal_index: usize, color_index: usize) -> u16 {
+    let pal_ram = consts::PAL_BG_START as *const u16;
+    *pal_ram.add(pal_index * 16 + color_index)
+}
+
+#[inline]
+pub unsafe fn get_obj_pal_color(pal_index: usize, color_index: usize) -> u16 {
+    let pal_ram = consts::PAL_OBJ_START as *const u16;
+    *pal_ram.add(pal_index * 16 + color_index)
+}
+
+#[inline]
 pub fn chara_block(index: usize) -> *mut u16 {
     unsafe {
         (consts::VRAM_BG_START as *mut u16).add(1024 * 8 * (index % consts::VRAM_CHARA_BLOCK_MAX))
