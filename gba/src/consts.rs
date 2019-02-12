@@ -54,6 +54,8 @@ pub const VRAM_BG_START:  usize = MEM_VRAM_START;
 pub const VRAM_BG_SIZE:   usize = 0x10000;
 pub const VRAM_OBJ_START: usize = VRAM_BG_START + VRAM_BG_SIZE;
 pub const VRAM_OBJ_SIZE:  usize = 0x08000;
+pub const VRAM_CHARA_BLOCK_MAX: usize = 4 + 2;
+pub const VRAM_SCREEN_BLOCK_MAX: usize = 32;
 
 // PAL
 pub const PAL_BG_START:  usize = MEM_PAL_START;

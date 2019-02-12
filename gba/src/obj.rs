@@ -1,6 +1,6 @@
 use register::{mmio::*, register_bitfields};
 use core::cmp;
-use crate::{consts, obj_aff::{Fixed, FixedInner}};
+use crate::{consts, obj_aff::FixedInner};
 
 register_bitfields! [u16,
     Attr0 [

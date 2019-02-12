@@ -74,13 +74,13 @@ pub unsafe fn load_obj_pal_color(pal_index: usize, color_index: usize, color: u1
 #[inline]
 pub fn chara_block(index: usize) -> *mut u16 {
     unsafe {
-        (consts::VRAM_BG_START as *mut u16).add(1024 * 8 * index)
+        (consts::VRAM_BG_START as *mut u16).add(1024 * 8 * (index % consts::VRAM_CHARA_BLOCK_MAX))
     }
 }
 
 #[inline]
 pub fn screen_block(index: usize) -> *mut u16 {
     unsafe {
-        (consts::VRAM_BG_START as *mut u16).add(1024 * index)
+        (consts::VRAM_BG_START as *mut u16).add(1024 * (index % consts::VRAM_SCREEN_BLOCK_MAX))
     }
 }

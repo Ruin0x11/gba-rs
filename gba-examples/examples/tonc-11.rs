@@ -1,4 +1,3 @@
-#![feature(asm)]
 #![feature(slice_patterns)]
 #![no_std]
 #![no_main]

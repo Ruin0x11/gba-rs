@@ -18,3 +18,5 @@
 /opt/devkitpro/tools/bin/grit toncfont.bmp -gu32 -gt -gB1 -p! -ftb -fh! -otoncfont
 
 /opt/devkitpro/tools/bin/grit metr.png -gu32 -gt -gB4 -al64 -ar128 -p -pu32 -pn32 -ftb -fh! -ometr2
+
+/opt/devkitpro/tools/bin/grit nums.png -gu32 -gt -gB8 -p -pu32 -pn32 -ftb -fh! -onums8

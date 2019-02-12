@@ -1,5 +1,6 @@
 use register::{mmio::*, register_bitfields};
-use crate::consts;
+use core::mem;
+use crate::{consts, lut};
 
 register_bitfields! [u16,
     /// LCD Control
@@ -79,6 +80,76 @@ register_bitfields! [u16,
     ]
 ];
 
+pub type FixedBgxpx = fixed::types::I8F8;
+
+pub type FixedBgxx = fixed::types::I20F12;
+
+#[repr(C)]
+pub struct BgAffine {
+    pub pa:   FixedBgxpx,
+    pub pb:   FixedBgxpx,
+    pub pc:   FixedBgxpx,
+    pub pd:   FixedBgxpx,
+    pub x:    FixedBgxx,
+    pub y:    FixedBgxx,
+}
+
+#[repr(C)]
+pub struct BgAffineSrc {
+    pub tex_x: i32,
+    pub tex_y: i32,
+    pub scr_x: i32,
+    pub scr_y: i32,
+    pub scale_x: i32,
+    pub scale_y: i32,
+    pub rot: isize,
+}
+
+impl BgAffine {
+    pub fn new() -> Self {
+        let buf: [u16; 8] = [0; 8];
+        unsafe {
+            mem::transmute::<[u16; 8], BgAffine>(buf)
+        }
+    }
+
+    pub fn set(&mut self, other: &BgAffine) {
+        let src = other as *const BgAffine;
+        let dst = self as *mut BgAffine;
+        unsafe {
+            dst.copy_from_nonoverlapping(src, 1);
+        }
+    }
+
+    pub fn set_pos(&mut self, x: FixedBgxx, y: FixedBgxx) {
+        self.x = x;
+        self.y = y;
+    }
+
+    pub fn identity(&mut self) {
+        self.pa = FixedBgxpx::from_bits(0x100);
+        self.pb = FixedBgxpx::from_bits(0);
+        self.pc = FixedBgxpx::from_bits(0);
+        self.pd = FixedBgxpx::from_bits(0x100);
+    }
+
+    pub fn rotate_scale(&mut self, src: &BgAffineSrc) {
+        let sin = lut::sin(src.rot as usize);
+        let cos = lut::cos(src.rot as usize);
+        let pa = src.scale_x * cos.to_bits() >> 12;
+        let pb = src.scale_x * -sin.to_bits() >> 12;
+        let pc = src.scale_y * sin.to_bits() >> 12;
+        let pd = src.scale_y * cos.to_bits() >> 12;
+
+        self.pa = FixedBgxpx::from_bits(pa as i16);
+        self.pb = FixedBgxpx::from_bits(pb as i16);
+        self.pc = FixedBgxpx::from_bits(pc as i16);
+        self.pd = FixedBgxpx::from_bits(pd as i16);
+        self.x = FixedBgxx::from_bits(src.tex_x - (pa * src.scr_x + pb * src.scr_y));
+        self.y = FixedBgxx::from_bits(src.tex_y - (pc * src.scr_x + pd * src.scr_y));
+    }
+}
+
 #[repr(C)]
 pub struct Mmio {
     pub dispcnt: ReadWrite<u16, Dispcnt::Register>,   // 0x00
@@ -100,6 +171,9 @@ pub struct Mmio {
     pub bg2vofs: WriteOnly<u16>,                      // 0x1A
     pub bg3hofs: WriteOnly<u16>,                      // 0x1C
     pub bg3vofs: WriteOnly<u16>,                      // 0x1E
+
+    pub bg2:     BgAffine,                            // 0x20
+    pub bg3:     BgAffine,                            // 0x30
 }
 
 #[inline]

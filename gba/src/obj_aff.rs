@@ -1,4 +1,4 @@
-use core::{cmp, ptr};
+use core::cmp;
 use crate::{consts, lut};
 
 #[repr(C)]
